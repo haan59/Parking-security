@@ -2,7 +2,7 @@ import { initSafetyGauge } from '../charts/safety-gauge.js';
 import { initAccessBarChart } from '../charts/access-bar.js';
 import { renderSidebar } from '../../includes/site-sidebar.js';
 import { renderTopbar } from '../../includes/site-header.js';
-import { initSidebarToggle, initClockAndDate, initOverlayScrollbars } from '../../includes/ui-common.js';
+import { initSidebarToggle, initClockAndDate, initOverlayScrollbars, initHorizontalDragScroll } from '../../includes/ui-common.js';
 
 function initSimpleDonut(canvasId, percentage, color) {
     const Chart = window.Chart;
@@ -275,6 +275,19 @@ window.addEventListener('DOMContentLoaded', () => {
     initWarningListLazyLoad();
 
     initOverlayScrollbars('warningList');
+    const accessScrollbar = initOverlayScrollbars('accessChartScroll', {
+        overflow: {
+            x: 'scroll',
+            y: 'hidden',
+        },
+        scrollbars: {
+            autoHide: 'leave',
+            autoHideDelay: 300,
+            dragScroll: true,
+            clickScroll: true,
+        },
+    });
+    initHorizontalDragScroll('accessChartScroll', accessScrollbar);
     initSidebarToggle();
     initClockAndDate();
 });

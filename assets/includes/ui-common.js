@@ -32,18 +32,84 @@ export function initClockAndDate() {
     setInterval(render, 1000);
 }
 
-export function initOverlayScrollbars(targetId = 'warningList') {
+export function initOverlayScrollbars(targetId = 'warningList', options = {}) {
     const os = window.OverlayScrollbarsGlobal;
-    if (!os) return;
+    if (!os) return null;
 
     const { OverlayScrollbars } = os;
     const target = document.getElementById(targetId);
-    if (!target) return;
+    if (!target) return null;
 
-    OverlayScrollbars(target, {
+    const baseOptions = {
         scrollbars: {
             autoHide: 'leave',
             autoHideDelay: 300,
         },
+    };
+
+    return OverlayScrollbars(target, {
+        ...baseOptions,
+        ...options,
+        scrollbars: {
+            ...baseOptions.scrollbars,
+            ...(options.scrollbars || {}),
+        },
     });
+}
+
+export function initHorizontalDragScroll(targetId = 'accessChartScroll', osInstance = null) {
+    const host = document.getElementById(targetId);
+    if (!host || host.dataset.dragScrollBound === '1') return;
+
+    let viewport = host;
+    if (osInstance?.elements) {
+        const osViewport = osInstance.elements().viewport;
+        if (osViewport) viewport = osViewport;
+    }
+
+    const canScrollHorizontally = () => viewport.scrollWidth > viewport.clientWidth + 1;
+
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartScrollLeft = 0;
+
+    const startDrag = (event) => {
+        if (event.button !== 0 || !canScrollHorizontally()) return;
+
+        isDragging = true;
+        dragStartX = event.clientX;
+        dragStartScrollLeft = viewport.scrollLeft;
+        host.classList.add('is-dragging');
+        event.preventDefault();
+    };
+
+    const dragMove = (event) => {
+        if (!isDragging) return;
+        const deltaX = event.clientX - dragStartX;
+        viewport.scrollLeft = dragStartScrollLeft - deltaX;
+    };
+
+    const endDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        host.classList.remove('is-dragging');
+    };
+
+    const onWheel = (event) => {
+        if (!canScrollHorizontally()) return;
+
+        const dominantDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        if (dominantDelta === 0) return;
+
+        viewport.scrollLeft += dominantDelta;
+        event.preventDefault();
+    };
+
+    host.addEventListener('mousedown', startDrag);
+    host.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('mousemove', dragMove);
+    window.addEventListener('mouseup', endDrag);
+    host.addEventListener('mouseleave', endDrag);
+
+    host.dataset.dragScrollBound = '1';
 }

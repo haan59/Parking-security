@@ -11,26 +11,9 @@ export function initAccessBarChart(canvasId) {
     const pxPerSlot = 64;
     const desiredWidth = labels.length * pxPerSlot;
     const track = canvas.closest('.access-chart-track');
-    const scroller = canvas.closest('.access-chart-scroll');
     if (track) {
+        track.style.width = `${desiredWidth}px`;
         track.style.minWidth = `${desiredWidth}px`;
-    }
-
-    if (scroller) {
-        let scrollHideTimer;
-        const showScrollbarWhileScrolling = () => {
-            scroller.classList.add('is-scrolling');
-            if (scrollHideTimer) {
-                clearTimeout(scrollHideTimer);
-            }
-            scrollHideTimer = setTimeout(() => {
-                scroller.classList.remove('is-scrolling');
-            }, 700);
-        };
-
-        scroller.addEventListener('scroll', showScrollbarWhileScrolling, { passive: true });
-        scroller.addEventListener('wheel', showScrollbarWhileScrolling, { passive: true });
-        scroller.addEventListener('touchmove', showScrollbarWhileScrolling, { passive: true });
     }
 
     const scheduleSkeletonRedraw = (chart) => {
@@ -169,6 +152,7 @@ export function initAccessBarChart(canvasId) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            events: [],
             layout: {
                 padding: {
                     left: 0,
