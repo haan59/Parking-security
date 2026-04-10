@@ -323,11 +323,18 @@
 
 @media (max-width: 1199.98px) {
     .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.25s ease;
+        width: min(#{$sidebar-w}, calc(100vw - 0.75rem));
+        max-width: calc(100vw - 0.75rem);
+        box-shadow: 0 16px 30px rgba(8, 24, 48, 0.2);
+    }
+
+    .dashboard-app.sidebar-collapsed .sidebar {
+        width: $sidebar-collapsed-w;
+        max-width: $sidebar-collapsed-w;
+        box-shadow: 0 10px 20px rgba(8, 24, 48, 0.14);
     }
 
     .dashboard-app.sidebar-open .sidebar {
-        transform: translateX(0);
+        z-index: 1040;
     }
 }

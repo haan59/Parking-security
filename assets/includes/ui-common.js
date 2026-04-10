@@ -5,11 +5,8 @@ export function initSidebarToggle() {
     if (!app || !btn) return;
 
     btn.addEventListener('click', () => {
-        if (window.innerWidth < 1200) {
-            app.classList.toggle('sidebar-open');
-            return;
-        }
         app.classList.toggle('sidebar-collapsed');
+        app.classList.remove('sidebar-open');
     });
 }
 
