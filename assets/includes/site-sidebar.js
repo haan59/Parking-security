@@ -9,7 +9,7 @@ const functionItems = [
 const manageItems = [
     { key: 'manage-area', icon: 'gridicons:stats-up-alt', label: 'Quản lý khu vực', href: '#' },
     { key: 'manage-camera', icon: 'lucide:cctv', label: 'Quản lý Cameras', href: '#' },
-    { key: 'manage-task', icon: 'mingcute:task-2-line', label: 'Nhiệm vụ Cameras', href: '#' },
+    { key: 'manage-task', icon: 'mingcute:task-2-line', label: 'Nhiệm vụ Camera', href: '#' },
     { key: 'manage-object', icon: 'ix:user-profile', label: 'Đối tượng', href: '#' },
     { key: 'manage-setting', icon: 'uil:setting', label: 'Cấu hình khác', href: '#' },
 ];
@@ -57,7 +57,7 @@ export function renderSidebar(activeKey) {
             </button>
             <div class="brand-text">
                 <p class="mb-0 small text-uppercase">HỆ THỐNG GIÁM SÁT</p>
-                <h1 class="h6 mb-0">AN TOÀN LAO ĐỘNG</h1>
+                <h1 class="h6 mb-0">AN NINH BÃI XE</h1>
             </div>
         </div>
 

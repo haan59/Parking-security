@@ -1,44 +1,8 @@
-import { initSafetyGauge } from '../charts/safety-gauge.js';
+import { initParkingStatus } from '../charts/parking-status.js';
 import { initAccessBarChart } from '../charts/access-bar.js';
 import { renderSidebar } from '../../includes/site-sidebar.js';
 import { renderTopbar } from '../../includes/site-header.js';
 import { initSidebarToggle, initClockAndDate, initOverlayScrollbars, initHorizontalDragScroll } from '../../includes/ui-common.js';
-
-function initSimpleDonut(canvasId, percentage, color) {
-    const Chart = window.Chart;
-    const canvas = document.getElementById(canvasId);
-    if (!canvas || !Chart) return;
-
-    const textElement = document.getElementById(`${canvasId}Text`);
-    const parsedHtmlPercent = textElement ? Number.parseInt(textElement.textContent, 10) : NaN;
-    const finalPercentage = Number.isFinite(parsedHtmlPercent) ? Math.max(0, Math.min(100, parsedHtmlPercent)) : Math.max(0, Math.min(100, percentage));
-
-    if (textElement) {
-        textElement.textContent = `${finalPercentage}%`;
-    }
-
-    new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-            datasets: [
-                {
-                    data: [finalPercentage, 100 - finalPercentage],
-                    backgroundColor: [color, '#e5e7eb'],
-                    borderWidth: 0,
-                    cutout: '86%',
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false },
-            },
-        },
-    });
-}
 
 function initWarningHotBadge() {
     const Chart = window.Chart;
@@ -95,7 +59,7 @@ function initWarningListViewport(visibleItems = 2.75) {
         const paddingTop = Number.parseFloat(styles.paddingTop) || 0;
         const paddingBottom = Number.parseFloat(styles.paddingBottom) || 0;
         const targetHeight = paddingTop + paddingBottom + itemHeight * visibleItems;
-        warningList.style.setProperty('--warning-list-max-height', `${targetHeight}px`);
+        warningList.style.setProperty('--warning-list-max-height', `${targetHeight / 16}rem`);
     };
 
     updateMaxHeight();
@@ -132,12 +96,14 @@ function initWarningListLazyLoad() {
         if (existingThumb) return existingThumb;
 
         const directImage = getDirectChildImage(item);
-        if (!directImage) return null;
-
         const thumb = document.createElement('div');
         thumb.className = 'warning-thumb';
-        item.insertBefore(thumb, directImage);
-        thumb.appendChild(directImage);
+        item.insertBefore(thumb, item.firstChild);
+
+        if (directImage) {
+            thumb.appendChild(directImage);
+        }
+
         return thumb;
     };
 
@@ -182,10 +148,12 @@ function initWarningListLazyLoad() {
         const titleMissing = !hasText(titleEl);
         const placeMissing = !hasText(placeEl);
 
+        // Áp dụng skeleton class cho các field rỗng
         timeEl.classList.toggle('is-skeleton', timeMissing);
         titleEl.classList.toggle('is-skeleton', titleMissing);
         placeEl.classList.toggle('is-skeleton', placeMissing);
 
+        // Ảnh rỗng → shimmer thumb
         if (thumb) {
             thumb.classList.toggle('is-skeleton', imageMissing);
         }
@@ -194,9 +162,16 @@ function initWarningListLazyLoad() {
             img.classList.toggle('is-skeleton-hidden', imageMissing);
         }
 
-        if (placeMissing) {
-            const placeIcon = placeEl.querySelector('.warning-place-icon');
-            if (placeIcon) placeIcon.style.visibility = 'hidden';
+        // Ẩn icon nếu place rỗng
+        const placeIcon = placeEl.querySelector('.warning-place-icon');
+        if (placeMissing && placeIcon) {
+            placeIcon.style.visibility = 'hidden';
+        } else if (placeIcon) {
+            placeIcon.style.visibility = 'visible';
+        }
+
+        if (img) {
+            img.classList.toggle('is-skeleton-hidden', imageMissing);
         }
     };
 
@@ -261,33 +236,90 @@ function initWarningListLazyLoad() {
     });
 }
 
+function initVehicleFlowBars() {
+    const card = document.querySelector('.vehicle-flow-card');
+    if (!card) return;
+
+    const list = card.querySelector('.vehicle-flow-list');
+    if (!list) return;
+
+    const parseValue = (text) => {
+        const numeric = Number.parseFloat(String(text).replace(/[^\d.-]/g, ''));
+        return Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
+    };
+
+    const renderBars = () => {
+        const items = Array.from(list.querySelectorAll('.vehicle-flow-item'));
+        if (!items.length) return;
+
+        items.forEach((item) => {
+            const fill = item.querySelector('.vehicle-flow-fill');
+            if (!fill) return;
+
+            const valueEl = item.querySelector('.vehicle-flow-value');
+            const value = parseValue(valueEl?.textContent ?? '0');
+
+            if (value <= 0) {
+                fill.style.width = '0%';
+                return;
+            }
+
+            const percent = Math.min(100, value);
+            fill.style.width = `${percent}%`;
+        });
+    };
+
+    renderBars();
+
+    if ('MutationObserver' in window) {
+        const observer = new MutationObserver(renderBars);
+        observer.observe(list, {
+            childList: true,
+            characterData: true,
+            subtree: true,
+        });
+    }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     renderSidebar('dashboard');
     renderTopbar('Bảng điều khiển');
 
-    initSafetyGauge('safetyGauge');
-    initAccessBarChart('accessBarChart');
-    initSimpleDonut('uniformDonut', 93, '#6bc24a');
-    initSimpleDonut('helmetDonut', 63, '#f58f1b');
-    initSimpleDonut('maskDonut', 25, '#5f4b8b');
-    initWarningHotBadge();
-    initWarningListViewport();
-    initWarningListLazyLoad();
-
-    initOverlayScrollbars('warningList');
-    const accessScrollbar = initOverlayScrollbars('accessChartScroll', {
-        overflow: {
-            x: 'scroll',
-            y: 'hidden',
-        },
-        scrollbars: {
-            autoHide: 'leave',
-            autoHideDelay: 300,
-            dragScroll: true,
-            clickScroll: true,
-        },
-    });
-    initHorizontalDragScroll('accessChartScroll', accessScrollbar);
-    initSidebarToggle();
+    // Keep topbar clock/date alive even when other widget initializers fail.
     initClockAndDate();
+
+    const safeInit = (initializer) => {
+        try {
+            return initializer();
+        } catch (error) {
+            // Continue initializing remaining widgets.
+            console.error(error);
+            return null;
+        }
+    };
+
+    safeInit(() => initParkingStatus('parkingStatus'));
+    safeInit(() => initAccessBarChart('accessBarChart'));
+    safeInit(initWarningHotBadge);
+    safeInit(initVehicleFlowBars);
+    safeInit(initWarningListViewport);
+    safeInit(initWarningListLazyLoad);
+
+    safeInit(() => initOverlayScrollbars('warningList'));
+    const accessScrollbar = safeInit(() =>
+        initOverlayScrollbars('accessChartScroll', {
+            overflow: {
+                x: 'scroll',
+                y: 'hidden',
+            },
+            scrollbars: {
+                autoHide: 'leave',
+                autoHideDelay: 300,
+                dragScroll: true,
+                clickScroll: true,
+            },
+        }),
+    );
+    safeInit(() => initHorizontalDragScroll('accessChartScroll', accessScrollbar));
+    safeInit(initSidebarToggle);
 });

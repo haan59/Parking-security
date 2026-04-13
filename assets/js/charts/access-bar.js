@@ -8,12 +8,12 @@ export function initAccessBarChart(canvasId) {
     const inData = [102, 44, 52, 14, 29, 27, 17, 85, 0, 0, 0, 0, 0, 0, 0];
     const outData = [56, 69, 16, 41, 22, 10, 102, 24, 0, 0, 0, 0, 0, 0, 0];
 
-    const pxPerSlot = 64;
-    const desiredWidth = labels.length * pxPerSlot;
+    const remPerSlot = 4;
+    const desiredWidthRem = labels.length * remPerSlot;
     const track = canvas.closest('.access-chart-track');
     if (track) {
-        track.style.width = `${desiredWidth}px`;
-        track.style.minWidth = `${desiredWidth}px`;
+        track.style.width = `${desiredWidthRem}rem`;
+        track.style.minWidth = `${desiredWidthRem}rem`;
     }
 
     const scheduleSkeletonRedraw = (chart) => {
@@ -52,7 +52,7 @@ export function initAccessBarChart(canvasId) {
             if (!meta?.data?.length) return;
 
             ctx.save();
-            ctx.font = "400 12px 'Montserrat', 'Be Vietnam Pro', sans-serif";
+            ctx.font = "400 0.75rem 'Montserrat', 'Be Vietnam Pro', sans-serif";
             ctx.fillStyle = 'rgba(0, 0, 0, 1)';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';

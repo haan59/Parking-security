@@ -1,10 +1,8 @@
-@use '../base/variables' as *;
-
 .chart-wrap {
     position: relative;
     width: 100%;
-    height: var(--chart-height, 156px);
-    min-height: var(--chart-height, 156px);
+    height: var(--chart-height, 9.75rem);
+    min-height: var(--chart-height, 9.75rem);
 
     canvas {
         display: block;
@@ -14,32 +12,7 @@
 }
 
 .chart-wrap-sm {
-    height: var(--chart-sm-height, 120px);
-    min-height: var(--chart-sm-height, 120px);
-    max-height: var(--chart-sm-height, 120px);
-}
-
-.mini-chart {
-    position: relative;
-    width: 86px;
-    height: 86px;
-
-    canvas {
-        display: block;
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    .donut-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.125rem;
-        color: rgba(0, 0, 0, 0.75);
-        pointer-events: none;
-        z-index: 2;
-    }
+    height: var(--chart-sm-height, 7.5rem);
+    min-height: var(--chart-sm-height, 7.5rem);
+    max-height: var(--chart-sm-height, 7.5rem);
 }

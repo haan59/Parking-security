@@ -23,65 +23,97 @@
 
                 <section class="content-grid mt-3">
                     <div class="dashboard-grid">
-                        <article class="dash-card stat-card safety-score-card grid-safety">
-                            <div class="score-head">
-                                <h3 class="card-title">Điểm số an toàn</h3>
+                        <article class="dash-card stat-card parking-status-card grid-parking-status">
+                            <div class="parking-status-head">
+                                <h3 class="card-title">Trạng thái bãi đỗ</h3>
                             </div>
-                            <div class="score-body">
+                            <div class="parking-status-body mt-4">
                                 <div class="chart-wrap chart-wrap-sm">
-                                    <canvas id="safetyGauge"></canvas>
-                                    <div class="gauge-value" id="safetyGaugeValue">3.5</div>
+                                    <canvas id="parkingStatus"></canvas>
+                                    <div class="parking-status-value" id="parkingStatusValue">78</div>
                                 </div>
-                                <div class="score-state">
+                                <div class="parking-status-state">
                                     <span>Trạng thái</span>
-                                    <strong>An toàn</strong>
+                                    <strong>Gần đầy</strong>
+                                    <span>(78%)</span>
                                 </div>
                             </div>
                             <p class="text-muted mb-0 info-line">
                                 <iconify-icon icon="mdi:information-outline"></iconify-icon>
-                                Dựa trên tỉ lệ chấp hành các yêu cầu an toàn
+                                Dựa trên số chỗ cố định, con số này là tương đối
                             </p>
                         </article>
 
-                        <article class="dash-card stat-card grid-uniform">
-                            <h3 class="card-title">Quần áo bảo hộ</h3>
-                            <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
-                                <div>
-                                    <p class="display-number mt-4 text-success">149</p>
-                                    <p class="text-muted mt-3 ms-2 display-number-total">160</p>
+                        <article class="dash-card stat-card parking-vehicle-card grid-parking-vehicle">
+                            <h3 class="card-title">Đỗ xe</h3>
+                            <div class="parking-vehicle-panel mt-4">
+                                <div class="parking-vehicle-metric">
+                                    <span class="parking-vehicle-label">Lưu bãi quá hạn</span>
+                                    <div class="parking-vehicle-value-row">
+                                        <strong>32</strong>
+                                        <iconify-icon icon="tabler:arrow-up-right"></iconify-icon>
+                                    </div>
                                 </div>
-                                <div class="mini-chart">
-                                    <canvas id="uniformDonut"></canvas>
-                                    <div class="donut-text" id="uniformDonutText">93%</div>
+                                <span class="parking-vehicle-divider" aria-hidden="true"></span>
+                                <div class="parking-vehicle-metric">
+                                    <span class="parking-vehicle-label">Sai vị trí</span>
+                                    <div class="parking-vehicle-value-row">
+                                        <strong>5</strong>
+                                        <iconify-icon icon="tabler:arrow-up-right"></iconify-icon>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="status-text mt-4 mb-0">
-                                Tình trạng:
-                                <span class="text-success">Tốt</span>
+                            <p class="text-muted mb-0 parking-vehicle-info">
+                                <iconify-icon icon="mdi:information-outline"></iconify-icon>
+                                Cập nhật mới nhất lúc 12:00 hôm nay
                             </p>
                         </article>
 
-                        <article class="dash-card stat-card grid-helmet">
-                            <h3 class="card-title">Mũ bảo hộ</h3>
-                            <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
-                                <div>
-                                    <p class="display-number mt-4 text-warning">96</p>
-                                    <p class="text-muted mt-3 ms-2 display-number-total">160</p>
+                        <article class="dash-card stat-card plate-search-card grid-plate-search">
+                            <div class="plate-search-head">
+                                <h3 class="card-title mb-0 plate-search-title">BKS hoặc Container ID</h3>
+                                <button type="button" class="plate-search-btn" aria-label="Tìm kiếm">
+                                    <iconify-icon icon="mingcute:search-line"></iconify-icon>
+                                </button>
+                            </div>
+                            <hr />
+                            <div class="plate-search-body mt-3">
+                                <div class="plate-row">
+                                    <span class="plate-key">Loại</span>
+                                    <span class="plate-value">Xe đầu kéo</span>
                                 </div>
-                                <div class="mini-chart">
-                                    <canvas id="helmetDonut"></canvas>
-                                    <div class="donut-text" id="helmetDonutText">63%</div>
+                                <div class="plate-row">
+                                    <span class="plate-key">ID</span>
+                                    <span class="plate-value">30K - 12345</span>
+                                </div>
+                                <div class="plate-row">
+                                    <span class="plate-key">Trạng thái</span>
+                                    <span class="plate-value">
+                                        <span class="plate-status-in">IN</span>
+                                        - Đang đỗ
+                                    </span>
+                                </div>
+                                <div class="plate-row">
+                                    <span class="plate-key">Vị trí</span>
+                                    <span class="plate-value">Bãi sau, vị trí A5</span>
                                 </div>
                             </div>
-                            <p class="status-text mt-4 mb-0">
-                                Tình trạng:
-                                <span class="text-warning">Chưa tốt</span>
+
+                            <p class="text-muted mb-0 plate-search-info">
+                                <iconify-icon icon="mdi:information-outline"></iconify-icon>
+                                Dữ liệu cuối cùng được ghi nhận
                             </p>
                         </article>
 
                         <article class="dash-card access-card grid-access">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h3 class="card-title mb-0">Đo đếm ra vào</h3>
+                                <div class="access-head-left">
+                                    <h3 class="card-title mb-0">Đo đếm ra vào</h3>
+                                    <div class="access-filter-toggle" role="tablist" aria-label="Lọc loại phương tiện">
+                                        <button type="button" class="access-filter-btn is-active">Ô tô</button>
+                                        <button type="button" class="access-filter-btn">Xe máy</button>
+                                    </div>
+                                </div>
                                 <select class="form-select form-select-sm w-auto">
                                     <option>Tất cả khu vực</option>
                                 </select>
@@ -111,19 +143,60 @@
                             </div>
                         </article>
 
-                        <article class="dash-card grid-mask">
-                            <h3 class="card-title">Khẩu trang</h3>
-                            <div class="d-flex align-items-center justify-content-between mt-4 gap-3">
-                                <div>
-                                    <p class="display-number mt-4 text-purple">38</p>
-                                    <p class="text-muted display-number-total mt-3 ms-2">160</p>
-                                </div>
-                                <div class="mini-chart">
-                                    <canvas id="maskDonut"></canvas>
-                                    <div class="donut-text" id="maskDonutText">25%</div>
+                        <article class="dash-card vehicle-flow-card grid-vehicle-flow">
+                            <div class="vehicle-flow-head">
+                                <h3 class="card-title mb-0">Phương tiện</h3>
+                                <div class="vehicle-flow-toggle" role="tablist" aria-label="Lọc vào ra">
+                                    <button type="button" class="vehicle-flow-tab is-active">Vào</button>
+                                    <button type="button" class="vehicle-flow-tab">Ra</button>
                                 </div>
                             </div>
-                            <div class="placeholder-note mt-4">Tỉ lệ mang khẩu trang còn thấp, cần nâng cao để bảo vệ sức khỏe.</div>
+
+                            <div class="vehicle-flow-list mt-3">
+                                <div class="vehicle-flow-item">
+                                    <span class="vehicle-flow-icon vehicle-flow-icon-truck"><iconify-icon icon="boxicons:truck"></iconify-icon></span>
+                                    <div class="vehicle-flow-content">
+                                        <div class="vehicle-flow-meta">
+                                            <span class="vehicle-flow-label">Xe Container / Tải</span>
+                                            <span class="vehicle-flow-value">23</span>
+                                        </div>
+                                        <span class="vehicle-flow-bar"><span class="vehicle-flow-fill vehicle-flow-fill-truck"></span></span>
+                                    </div>
+                                </div>
+
+                                <div class="vehicle-flow-item">
+                                    <span class="vehicle-flow-icon vehicle-flow-icon-car"><iconify-icon icon="hugeicons:car-03"></iconify-icon></span>
+                                    <div class="vehicle-flow-content">
+                                        <div class="vehicle-flow-meta">
+                                            <span class="vehicle-flow-label">Ô tô con</span>
+                                            <span class="vehicle-flow-value">435</span>
+                                        </div>
+                                        <span class="vehicle-flow-bar"><span class="vehicle-flow-fill vehicle-flow-fill-car"></span></span>
+                                    </div>
+                                </div>
+
+                                <div class="vehicle-flow-item">
+                                    <span class="vehicle-flow-icon vehicle-flow-icon-bike"><iconify-icon icon="ri:motorbike-line"></iconify-icon></span>
+                                    <div class="vehicle-flow-content">
+                                        <div class="vehicle-flow-meta">
+                                            <span class="vehicle-flow-label">Xe máy</span>
+                                            <span class="vehicle-flow-value">33</span>
+                                        </div>
+                                        <span class="vehicle-flow-bar"><span class="vehicle-flow-fill vehicle-flow-fill-bike"></span></span>
+                                    </div>
+                                </div>
+
+                                <div class="vehicle-flow-item">
+                                    <span class="vehicle-flow-icon vehicle-flow-icon-unknown"><iconify-icon icon="mdi:help"></iconify-icon></span>
+                                    <div class="vehicle-flow-content">
+                                        <div class="vehicle-flow-meta">
+                                            <span class="vehicle-flow-label">Không xác định</span>
+                                            <span class="vehicle-flow-value">23</span>
+                                        </div>
+                                        <span class="vehicle-flow-bar"><span class="vehicle-flow-fill vehicle-flow-fill-unknown"></span></span>
+                                    </div>
+                                </div>
+                            </div>
                         </article>
 
                         <article class="dash-card grid-tracking">
@@ -142,7 +215,7 @@
                                             Live
                                         </span>
                                         <div class="camera-meta">
-                                            <p class="m-0 fw-regular">Khu vực công trường</p>
+                                            <p class="m-0 fw-regular">Khu vực bãi đỗ</p>
                                             <small class="font-regular">Cam-01</small>
                                         </div>
                                     </div>
@@ -166,8 +239,8 @@
                                             <iconify-icon icon="pepicons-pencil:camera-off"></iconify-icon>
                                         </div>
                                         <div class="camera-meta">
-                                            <p class="m-0 fw-regular">Kho nguyên vật liệu</p>
-                                            <small class="font-regular">Cam-01 - Offline</small>
+                                            <p class="m-0 fw-regular">Khu vực bảo vệ</p>
+                                            <small class="font-regular">Cam-01</small>
                                         </div>
                                     </div>
                                 </div>
@@ -190,10 +263,10 @@
                                     </div>
                                     <div>
                                         <small>08:43</small>
-                                        <p class="mb-1">Xâm nhập vùng nguy hiểm</p>
+                                        <p class="mb-1">[Người ] Xâm nhập vùng cấm</p>
                                         <span class="warning-place">
                                             <img class="warning-place-icon" src="assets/img/CameraCircle.svg" alt="Camera" />
-                                            Cam-01
+                                            Cam-01 ..
                                         </span>
                                     </div>
                                 </div>
@@ -201,10 +274,10 @@
                                     <img src="./assets/img/khongdungquanao.png" alt="Warning" />
                                     <div>
                                         <small>08:43</small>
-                                        <p class="mb-1">Không dùng quần áo bảo hộ</p>
+                                        <p class="mb-1">[30L - 12345] Dừng đỗ quá lâu</p>
                                         <span class="warning-place">
                                             <img class="warning-place-icon" src="assets/img/CameraCircle.svg" alt="Camera" />
-                                            Cam-01
+                                            Cam-01 ..
                                         </span>
                                     </div>
                                 </div>
@@ -212,10 +285,10 @@
                                     <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=400&q=60" alt="Warning" />
                                     <div>
                                         <small>08:43</small>
-                                        <p class="mb-1">Không mang mũ bảo hộ</p>
+                                        <p class="mb-1">[30L - 12345] Đỗ sai vị trí</p>
                                         <span class="warning-place">
                                             <img class="warning-place-icon" src="assets/img/CameraCircle.svg" alt="Camera" />
-                                            Cam-01
+                                            Cam-01 ..
                                         </span>
                                     </div>
                                 </div>
@@ -226,7 +299,6 @@
                                         <p class="mb-1"></p>
                                         <span class="warning-place">
                                             <img class="warning-place-icon" src="assets/img/CameraCircle.svg" alt="Camera" />
-                                            <!-- Cam-01 -->
                                         </span>
                                     </div>
                                 </div>
@@ -247,45 +319,35 @@
                             </div>
                         </article>
 
-                        <article class="dash-card weather-card grid-weather">
-                            <div class="d-flex justify-content-between">
-                                <h3 class="card-title">Thời tiết</h3>
-                                <span class="text-muted fw-semibold">Hà Nội</span>
-                            </div>
-                            <div class="weather-main mt-3">
-                                <div class="weather-info">
-                                    <p class="weather-temp">
-                                        32
-                                        <span>oC</span>
-                                    </p>
+                        <article class="dash-card alert-stats-card grid-alert-stats">
+                            <h3 class="card-title alert-stats-title">Thống kê cảnh báo</h3>
+
+                            <div class="alert-bubble-chart" aria-label="Biểu đồ thống kê cảnh báo">
+                                <div class="alert-bubble alert-bubble-main">
+                                    <span>96</span>
                                 </div>
-                                <img class="weather-icon" src="assets/img/weather.svg" alt="Weather" />
-                            </div>
-                            <div class="text-muted mb-0 weather-description">Nhiều mây, oi bức</div>
-                            <div class="row g-2 mt-3 weather-stats small py-2 border-top">
-                                <div class="col-4">
-                                    <div class="weather-stat-head">
-                                        <iconify-icon icon="carbon:rain-drop" width="16" height="16"></iconify-icon>
-                                        <span>Độ ẩm</span>
-                                    </div>
-                                    <p class="text-black weather-stat-value">82%</p>
+                                <div class="alert-bubble alert-bubble-warning">
+                                    <span>14</span>
                                 </div>
-                                <div class="col-4">
-                                    <div class="weather-stat-head">
-                                        <iconify-icon icon="humbleicons:wind" width="16" height="16"></iconify-icon>
-                                        <span>Gió</span>
-                                    </div>
-                                    <p class="text-black weather-stat-value">12 km/h</p>
-                                </div>
-                                <div class="col-4">
-                                    <div class="weather-stat-head">
-                                        <iconify-icon icon="mi:rain" width="16" height="16"></iconify-icon>
-                                        <span>Mưa</span>
-                                    </div>
-                                    <p class="text-black weather-stat-value">30%</p>
+                                <div class="alert-bubble alert-bubble-danger">
+                                    <span>3</span>
                                 </div>
                             </div>
-                            <div class="placeholder-note mt-2">Thời tiết nắng cần đảm bảo sức khỏe</div>
+
+                            <div class="alert-stats-legend">
+                                <div class="alert-legend-item">
+                                    <span class="alert-legend-dot alert-legend-blue"></span>
+                                    <span>Dừng đỗ</span>
+                                </div>
+                                <div class="alert-legend-item">
+                                    <span class="alert-legend-dot alert-legend-orange"></span>
+                                    <span>Vùng cấm</span>
+                                </div>
+                                <div class="alert-legend-item">
+                                    <span class="alert-legend-dot alert-legend-yellow"></span>
+                                    <span>Sai vị trí</span>
+                                </div>
+                            </div>
                         </article>
                     </div>
                 </section>
