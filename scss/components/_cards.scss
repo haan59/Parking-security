@@ -185,7 +185,7 @@
         .parking-status-body {
             grid-template-columns: minmax(8.75rem, var(--parking-chart-w)) max-content;
             justify-content: start;
-            column-gap: 1.1rem;
+            column-gap: 2.25rem;
         }
 
         .parking-status-state {
@@ -864,6 +864,12 @@
             font-size: $font-size-base;
             font-weight: $font-bold;
             line-height: 1.25;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: normal;
 
             &.is-skeleton {
                 display: block;
@@ -1074,6 +1080,7 @@
         align-items: center;
         gap: 1rem;
         flex-wrap: wrap;
+        justify-content: space-evenly;
     }
 
     .alert-legend-item {
