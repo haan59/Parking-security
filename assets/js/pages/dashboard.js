@@ -4,6 +4,69 @@ import { renderSidebar } from '../../includes/site-sidebar.js';
 import { renderTopbar } from '../../includes/site-header.js';
 import { initSidebarToggle, initClockAndDate, initOverlayScrollbars, initHorizontalDragScroll } from '../../includes/ui-common.js';
 
+const ACCESS_VARIANTS = {
+    oto: {
+        labels: ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
+        inData: [102, 44, 52, 14, 29, 27, 17, 85, null, null, null, null, null, null, null],
+        outData: [56, 69, 16, 41, 22, 10, 102, 24, null, null, null, null, null, null, null],
+        legendIn: 443,
+        legendOut: 234,
+    },
+    xemay: {
+        labels: ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
+        inData: [32, 49, 27, 18, 24, 19, 31, 42, 12, 9, 6, 4, 3, 2, 1],
+        outData: [21, 35, 16, 12, 15, 13, 22, 28, 8, 6, 4, 3, 2, 1, 1],
+        legendIn: 186,
+        legendOut: 130,
+    },
+};
+
+const VEHICLE_FLOW_VARIANTS = {
+    vao: [
+        { label: 'Xe Container / Tải', value: 23 },
+        { label: 'Ô tô con', value: 435 },
+        { label: 'Xe máy', value: 33 },
+        { label: 'Không xác định', value: 23 },
+    ],
+    ra: [
+        { label: 'Xe Container / Tải', value: 19 },
+        { label: 'Ô tô con', value: 402 },
+        { label: 'Xe máy', value: 52 },
+        { label: 'Không xác định', value: 18 },
+    ],
+};
+
+function initToggleButtonGroup(groupSelector, buttonSelector, activeClass = 'is-active', onChange) {
+    const group = document.querySelector(groupSelector);
+    if (!group) return;
+
+    const buttons = Array.from(group.querySelectorAll(buttonSelector));
+    if (!buttons.length) return;
+
+    const setActiveButton = (activeButton) => {
+        buttons.forEach((button) => {
+            const isActive = button === activeButton;
+            button.classList.toggle(activeClass, isActive);
+            button.setAttribute('aria-pressed', String(isActive));
+        });
+    };
+
+    const initiallyActiveButton = buttons.find((button) => button.classList.contains(activeClass)) ?? buttons[0];
+    setActiveButton(initiallyActiveButton);
+    if (typeof onChange === 'function') {
+        onChange(initiallyActiveButton, buttons.indexOf(initiallyActiveButton));
+    }
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setActiveButton(button);
+            if (typeof onChange === 'function') {
+                onChange(button, buttons.indexOf(button));
+            }
+        });
+    });
+}
+
 function initWarningHotBadge() {
     const Chart = window.Chart;
     const warningFoot = document.querySelector('.warning-foot');
@@ -248,6 +311,17 @@ function initVehicleFlowBars() {
         return Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
     };
 
+    const valueElements = Array.from(list.querySelectorAll('.vehicle-flow-value'));
+    const labelElements = Array.from(list.querySelectorAll('.vehicle-flow-label'));
+
+    const animateFill = (fill, percent) => {
+        fill.style.width = '0%';
+        fill.getBoundingClientRect();
+        requestAnimationFrame(() => {
+            fill.style.width = `${percent}%`;
+        });
+    };
+
     const renderBars = () => {
         const items = Array.from(list.querySelectorAll('.vehicle-flow-item'));
         if (!items.length) return;
@@ -265,8 +339,24 @@ function initVehicleFlowBars() {
             }
 
             const percent = Math.min(100, value);
-            fill.style.width = `${percent}%`;
+            animateFill(fill, percent);
         });
+    };
+
+    const updateData = (nextItems) => {
+        if (!Array.isArray(nextItems) || !nextItems.length) return;
+
+        nextItems.forEach((item, index) => {
+            if (labelElements[index] && typeof item.label === 'string') {
+                labelElements[index].textContent = item.label;
+            }
+
+            if (valueElements[index] && Number.isFinite(item.value)) {
+                valueElements[index].textContent = String(item.value);
+            }
+        });
+
+        renderBars();
     };
 
     renderBars();
@@ -279,6 +369,10 @@ function initVehicleFlowBars() {
             subtree: true,
         });
     }
+
+    return {
+        updateData,
+    };
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -299,11 +393,37 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     safeInit(() => initParkingStatus('parkingStatus'));
-    safeInit(() => initAccessBarChart('accessBarChart'));
+    const accessChartController = safeInit(() => initAccessBarChart('accessBarChart', ACCESS_VARIANTS.oto));
     safeInit(initWarningHotBadge);
-    safeInit(initVehicleFlowBars);
+    const vehicleFlowController = safeInit(initVehicleFlowBars);
     safeInit(initWarningListViewport);
     safeInit(initWarningListLazyLoad);
+    const accessLegendIn = document.querySelector('.access-legend .legend-item-in .legend-value');
+    const accessLegendOut = document.querySelector('.access-legend .legend-item-out .legend-value');
+
+    safeInit(() =>
+        initToggleButtonGroup('.access-filter-toggle', '.access-filter-btn', 'is-active', (_, index) => {
+            const variantKey = index === 1 ? 'xemay' : 'oto';
+            const variant = ACCESS_VARIANTS[variantKey];
+
+            accessChartController?.updateData(variant);
+
+            if (accessLegendIn) {
+                accessLegendIn.textContent = String(variant.legendIn);
+            }
+
+            if (accessLegendOut) {
+                accessLegendOut.textContent = String(variant.legendOut);
+            }
+        }),
+    );
+
+    safeInit(() =>
+        initToggleButtonGroup('.vehicle-flow-toggle', '.vehicle-flow-tab', 'is-active', (_, index) => {
+            const variantKey = index === 1 ? 'ra' : 'vao';
+            vehicleFlowController?.updateData(VEHICLE_FLOW_VARIANTS[variantKey]);
+        }),
+    );
 
     safeInit(() => initOverlayScrollbars('warningList'));
     const accessScrollbar = safeInit(() =>

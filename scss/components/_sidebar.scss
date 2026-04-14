@@ -10,12 +10,13 @@
     padding: 0.9rem 0.65rem;
     overflow: hidden auto;
     box-sizing: border-box;
-    transition: width 0.25s ease;
+    transition: none;
     z-index: 1030;
 
     .brand-box {
         padding: 0.3rem 0.75rem;
         gap: 1rem;
+        transition: none;
     }
 
     > hr {
@@ -59,17 +60,11 @@
         padding: 0.15rem;
         opacity: 1;
         visibility: visible;
-        transform: translateX(0);
         max-width: 13.75rem;
         overflow: hidden;
         white-space: nowrap;
-        transition:
-            opacity 0.16s ease,
-            transform 0.16s ease,
-            visibility 0.16s ease,
-            max-width 0.2s ease;
-        transition-delay: 0.14s;
-        transform-origin: left center;
+        transition: none;
+        transition-delay: 0s;
     }
 
     .nav-link {
@@ -83,14 +78,20 @@
         padding: 0.53rem 0.7rem;
         font-size: $font-size-sm;
         min-height: 2.25rem;
+        transition:
+            background-color 0.16s ease,
+            color 0.16s ease;
 
         iconify-icon {
             font-size: 1.05rem;
             flex: 0 0 auto;
             width: 1.1rem;
+            min-width: 1.1rem;
             display: inline-flex;
             justify-content: center;
             color: rgba(255, 255, 255, 0.5);
+            transition: none;
+            transform: translateZ(0);
         }
 
         .nav-live-dot {
@@ -229,7 +230,6 @@
         .nav-link .nav-label {
             opacity: 0;
             visibility: hidden;
-            transform: translateX(-0.25rem);
             max-width: 0;
             overflow: hidden;
             white-space: nowrap;
@@ -241,12 +241,10 @@
             padding-inline: 0;
             justify-content: center;
             gap: 0;
-            transition: none;
         }
 
         .sidebar-toggle {
             margin-inline: auto;
-            transition: none;
         }
 
         .nav-link {
@@ -259,7 +257,6 @@
             gap: 0;
             border-radius: 0.625rem;
             flex-shrink: 0;
-            transition: none;
             overflow: visible;
 
             > iconify-icon {
@@ -327,10 +324,34 @@
         box-shadow: 0 1rem 1.875rem rgba(8, 24, 48, 0.2);
     }
 
+    .main-content,
+    .dashboard-app.sidebar-collapsed .main-content {
+        width: calc(100% - #{$sidebar-collapsed-w});
+        margin-left: $sidebar-collapsed-w;
+    }
+
     .dashboard-app.sidebar-collapsed .sidebar {
         width: $sidebar-collapsed-w;
         max-width: $sidebar-collapsed-w;
         box-shadow: 0 0.625rem 1.25rem rgba(8, 24, 48, 0.14);
+    }
+
+    .dashboard-app.sidebar-open .sidebar {
+        z-index: 1040;
+    }
+}
+
+@media (min-width: 75rem) and (max-width: 95.4375rem) {
+    .sidebar {
+        width: min(#{$sidebar-w}, calc(100vw - 0.75rem));
+        max-width: calc(100vw - 0.75rem);
+        box-shadow: 0 1rem 1.875rem rgba(8, 24, 48, 0.2);
+    }
+
+    .main-content,
+    .dashboard-app.sidebar-collapsed .main-content {
+        width: calc(100% - #{$sidebar-collapsed-w});
+        margin-left: $sidebar-collapsed-w;
     }
 
     .dashboard-app.sidebar-open .sidebar {

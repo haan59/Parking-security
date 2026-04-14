@@ -1,12 +1,45 @@
 export function initSidebarToggle() {
     const app = document.querySelector('.dashboard-app');
     const btn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
 
-    if (!app || !btn) return;
+    if (!app || !btn || !sidebar) return;
+
+    let isAnimating = false;
 
     btn.addEventListener('click', () => {
+        if (isAnimating) return;
+
+        const gsap = window.gsap;
+        const startWidth = sidebar.getBoundingClientRect().width;
+
         app.classList.toggle('sidebar-collapsed');
         app.classList.remove('sidebar-open');
+
+        // Fallback to instant toggle if GSAP is unavailable.
+        if (!gsap) return;
+
+        const endWidth = sidebar.getBoundingClientRect().width;
+        if (!Number.isFinite(startWidth) || !Number.isFinite(endWidth) || Math.abs(startWidth - endWidth) < 0.5) return;
+
+        isAnimating = true;
+        gsap.killTweensOf(sidebar);
+        gsap.fromTo(
+            sidebar,
+            { width: startWidth },
+            {
+                width: endWidth,
+                duration: 0.24,
+                ease: 'power2.out',
+                clearProps: 'width',
+                onComplete: () => {
+                    isAnimating = false;
+                },
+                onInterrupt: () => {
+                    isAnimating = false;
+                },
+            },
+        );
     });
 }
 

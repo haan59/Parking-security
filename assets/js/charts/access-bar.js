@@ -1,12 +1,19 @@
-export function initAccessBarChart(canvasId) {
+export function initAccessBarChart(canvasId, initialData) {
     const Chart = window.Chart;
     const canvas = document.getElementById(canvasId);
     if (!canvas || !Chart) return;
 
-    const labels = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
-    const loadingFromIndex = labels.indexOf('15:00');
-    const inData = [102, 44, 52, 14, 29, 27, 17, 85, 0, 0, 0, 0, 0, 0, 0];
-    const outData = [56, 69, 16, 41, 22, 10, 102, 24, 0, 0, 0, 0, 0, 0, 0];
+    const defaultLabels = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
+    const defaultData = {
+        labels: defaultLabels,
+        inData: [102, 44, 52, 14, 29, 27, 17, 85, null, null, null, null, null, null, null],
+        outData: [56, 69, 16, 41, 22, 10, 102, 24, null, null, null, null, null, null, null],
+    };
+
+    const dataSet = initialData ?? defaultData;
+    const labels = dataSet.labels ?? defaultLabels;
+    const inData = dataSet.inData ?? defaultData.inData;
+    const outData = dataSet.outData ?? defaultData.outData;
 
     const remPerSlot = 4;
     const desiredWidthRem = labels.length * remPerSlot;
@@ -44,6 +51,14 @@ export function initAccessBarChart(canvasId) {
         chart.$skeletonAnimationFrame = requestAnimationFrame(loop);
     };
 
+    const cancelSkeletonRedraw = (chart) => {
+        if (!chart.$skeletonAnimationFrame) return;
+
+        cancelAnimationFrame(chart.$skeletonAnimationFrame);
+        chart.$skeletonAnimationFrame = null;
+        chart.$skeletonLastRedrawAt = null;
+    };
+
     const accessTimeLabelsPlugin = {
         id: 'accessTimeLabels',
         afterDraw(chart) {
@@ -75,8 +90,14 @@ export function initAccessBarChart(canvasId) {
             const { ctx, chartArea } = chart;
             const inMeta = chart.getDatasetMeta(0);
             const outMeta = chart.getDatasetMeta(1);
+            const inDataPoints = chart.data.datasets[0]?.data ?? [];
+            const outDataPoints = chart.data.datasets[1]?.data ?? [];
             const skeletonPairs = [];
-            for (let i = loadingFromIndex; i < chart.data.labels.length; i += 1) {
+            for (let i = 0; i < chart.data.labels.length; i += 1) {
+                const inValue = inDataPoints[i];
+                const outValue = outDataPoints[i];
+                if (inValue != null || outValue != null) continue;
+
                 const inBar = inMeta?.data?.[i];
                 const outBar = outMeta?.data?.[i];
                 if (inBar && outBar) skeletonPairs.push([inBar, outBar]);
@@ -124,7 +145,7 @@ export function initAccessBarChart(canvasId) {
         },
     };
 
-    new Chart(canvas, {
+    const chart = new Chart(canvas, {
         type: 'bar',
         data: {
             labels,
@@ -176,4 +197,35 @@ export function initAccessBarChart(canvasId) {
         },
         plugins: [accessTimeLabelsPlugin, accessLoadingSkeletonPlugin],
     });
+
+    const updateData = (nextData) => {
+        if (!nextData) return;
+
+        const nextLabels = nextData.labels ?? defaultLabels;
+        const nextInData = nextData.inData ?? defaultData.inData;
+        const nextOutData = nextData.outData ?? defaultData.outData;
+
+        chart.data.labels = nextLabels;
+        chart.data.datasets[0].data = nextInData;
+        chart.data.datasets[1].data = nextOutData;
+
+        const nextWidthRem = nextLabels.length * remPerSlot;
+        if (track) {
+            track.style.width = `${nextWidthRem}rem`;
+            track.style.minWidth = `${nextWidthRem}rem`;
+        }
+
+        const hasLoadingSlots = nextInData.some((value, index) => value == null && nextOutData[index] == null);
+        if (!hasLoadingSlots) {
+            cancelSkeletonRedraw(chart);
+        }
+
+        chart.reset();
+        chart.update();
+    };
+
+    return {
+        chart,
+        updateData,
+    };
 }

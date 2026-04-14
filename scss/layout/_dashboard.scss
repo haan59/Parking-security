@@ -11,9 +11,7 @@
     width: calc(100% - #{$sidebar-w});
     margin-left: $sidebar-w;
     padding: 0.25rem 1.15rem 1rem;
-    transition:
-        width 0.25s ease,
-        margin-left 0.25s ease;
+    transition: none;
 }
 
 .topbar {
@@ -79,13 +77,18 @@
     font-size: $font-size-base;
     font-weight: $font-bold;
     line-height: 1.125rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
 }
 
 .form-select.form-select-sm {
     color: rgba(0, 0, 0, 0.5);
     border-color: #e6e9ef;
     border-radius: 0.1875rem;
-    min-width: 6.75rem;
+    margin-left: 0.625rem;
 }
 
 .dashboard-grid {
